@@ -15,40 +15,24 @@
     position:fixed;
     top:0;left:0;
     width:100%;
-    height:130px;
+    height:140px;
     display:flex;
     align-items:center;
     justify-content:center;
-    background:linear-gradient(160deg,#ff7a1a,#c94a00);
+    background:#000;
     overflow:hidden;
-    box-shadow:0 4px 24px rgba(0,0,0,.6);
+    box-shadow:0 4px 24px rgba(0,0,0,.7);
   }
   .banner img{
     width:100%;height:100%;
     object-fit:cover;
     display:block;
   }
-  .banner .title{
-    position:absolute;
-    font-size:52px;font-weight:800;
-    color:#0a0a0c;letter-spacing:8px;
-    display:none;
-    font-family:"Inter","Segoe UI",sans-serif;
-  }
-  .banner.noimg .title{display:block}
 </style>
 </head>
 <body>
-  <div class="banner" id="banner">
-    <img id="img" src="" alt=""
-         onload="document.getElementById('banner').classList.remove('noimg')"
-         onerror="document.getElementById('banner').classList.add('noimg')">
-    <div class="title">RAXO</div>
+  <div class="banner">
+    <img src="https://cdn.discordapp.com/attachments/1544140676772405340/1558700795833229323/Pogba.jpg?ex=6acc64bc&is=6acb133c&hm=0e8bf48b5078f83137fa1ff2b7e12faaa90fafc6ad286b6a9af6d369347285fe">
   </div>
-<script>
-  const URL = "https://i.pinimg.com/736x/3c/b5/fb/3cb5fb27977e675a3b162c065c998682.jpg";
-  const img = document.getElementById("img");
-  img.src = URL;
-</script>
 </body>
 </html>
