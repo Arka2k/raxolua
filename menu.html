@@ -1,3 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RAXO</title>
+<style>
+  :root{
+    --accent:#ff7a1a;
+    --accent-2:#ffb066;
+    --accent-glow:rgba(255,122,26,.45);
+    --bg:#0a0a0c;
+    --panel:#121215;
+    --panel-2:#1a1a20;
+    --stroke:rgba(255,255,255,.08);
+    --text:#eef1f7;
+    --text-dim:#8a93ab;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-drag:none}
+  html,body{
+    width:100%;height:100%;overflow:hidden;background:transparent;
+    font-family:"Inter","Segoe UI",system-ui,sans-serif;
+    font-size:13px;color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  body{display:none}
+  body.open{display:block}
+
+  .wrap{
+    position:fixed;top:100px;left:100px;
+    width:400px;height:640px;
+    background:var(--bg);
+    border:1px solid var(--stroke);
+    border-radius:calc(var(--radius) + 2px);
+    box-shadow:0 30px 80px rgba(0,0,0,.75), 0 0 40px -10px var(--accent-glow);
+    overflow:hidden;
+    display:flex;flex-direction:column;
+    cursor:default;
+  }
+
+  .banner{
+    height:150px;
+    background:linear-gradient(160deg,#ff7a1a,#c94a00);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;overflow:hidden;
+    flex-shrink:0;
+  }
+  .banner img{
+    width:100%;height:100%;object-fit:cover;
+    display:block;
+  }
+  .banner .title{
+    position:absolute;font-size:44px;font-weight:800;
+    color:#0a0a0c;letter-spacing:6px;text-shadow:0 2px 8px rgba(0,0,0,.3);
+    display:none;
+  }
+  .banner.noimg .title{display:block}
+
+  .header{
+    height:44px;background:#000;
+    display:flex;align-items:center;justify-content:center;
+    font-size:17px;font-weight:600;color:var(--text);
+    border-bottom:1px solid var(--stroke);
+    flex-shrink:0;
+  }
+
+  .list{
+    flex:1;overflow-y:auto;
+    display:flex;flex-direction:column;
+  }
+  .list::-webkit-scrollbar{width:6px}
+  .list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+  .list::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+  .row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 18px;height:42px;
+    border-bottom:1px solid rgba(255,255,255,.04);
+    cursor:pointer;transition:background .12s;
+    flex-shrink:0;
+  }
+  .row:hover{background:var(--panel-2)}
+  .row.active{background:var(--accent)}
+  .row.active .name,
+  .row.active .arrow{color:#fff}
+
+  .row .name{font-size:14.5px;color:var(--text);font-weight:500}
+  .row .arrow{font-size:18px;color:#c8c8d0}
+
+  .row.has-controls{cursor:default}
+  .row.has-controls .ctl{display:flex;align-items:center;gap:10px}
+
+  .tg{
+    width:34px;height:18px;border-radius:10px;position:relative;
+    background:rgba(255,255,255,.1);transition:background .2s;cursor:pointer;flex-shrink:0;
+  }
+  .tg::after{
+    content:'';position:absolute;top:2px;left:2px;
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    transition:left .18s cubic-bezier(.5,1.6,.5,1);
+  }
+  .tg.on{background:var(--accent)}
+  .tg.on::after{left:18px}
+
+  .sld{display:flex;align-items:center;gap:8px;width:180px}
+  .sld input[type=range]{
+    -webkit-appearance:none;flex:1;height:4px;border-radius:2px;
+    background:rgba(255,255,255,.1);outline:none;cursor:pointer;
+  }
+  .sld input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:12px;height:12px;border-radius:50%;
+    background:#fff;box-shadow:0 0 8px -1px var(--accent-glow);cursor:pointer;
+  }
+  .sld .val{min-width:32px;text-align:right;font-size:11px;color:var(--text-dim)}
+
+  .cb{
+    padding:4px 12px;border-radius:var(--radius);background:rgba(255,255,255,.05);
+    border:1px solid var(--stroke);font-size:11.5px;cursor:pointer;
+    min-width:110px;text-align:center;transition:all .15s;
+  }
+  .cb:hover{border-color:var(--accent);background:rgba(255,122,26,.1)}
+
+  .btn{
+    padding:5px 12px;border-radius:var(--radius);background:rgba(255,255,255,.05);
+    border:1px solid var(--stroke);font-size:11.5px;font-weight:600;cursor:pointer;
+    transition:all .15s;color:var(--text);
+  }
+  .btn:hover{background:rgba(255,122,26,.15);border-color:var(--accent)}
+  .btn.danger:hover{background:rgba(255,77,107,.15);border-color:#ff4d6b;color:#ff4d6b}
+
+  .search-ic{font-size:18px;color:#c8c8d0}
+
+  .foot{
+    height:34px;background:#000;display:flex;align-items:center;
+    padding:0 16px;font-size:14px;font-weight:600;color:var(--text);
+    border-top:1px solid var(--stroke);flex-shrink:0;
+  }
+
+  .sep{
+    padding:8px 18px 4px;font-size:10.5px;color:var(--text-dim);
+    letter-spacing:1px;text-transform:uppercase;background:transparent;
+    border:none;cursor:default;height:auto;
+  }
+  .sep:hover{background:transparent}
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap">
+  <div class="banner" id="banner">
+    <img id="bannerImg" src="" alt="" style="display:none"
+         onload="document.getElementById('banner').classList.remove('noimg')"
+         onerror="document.getElementById('banner').classList.add('noimg')">
+    <div class="title">RAXO</div>
+  </div>
+  <div class="header" id="header">Home</div>
+  <div class="list" id="list"></div>
+  <div class="foot" id="foot">1/10</div>
+</div>
+
 <script>
 const BANNER_URL = "https://i.pinimg.com/736x/3c/b5/fb/3cb5fb27977e675a3b162c065c998682.jpg";
 
@@ -66,9 +225,9 @@ const SCHEMA = [
     { t:"btn", n:"Flip Vehicle",   a:"veh_flip" },
     { t:"btn", n:"Delete Vehicle", a:"veh_del", d:true },
     { t:"sep", n:"Carry" },
-    { t:"cb",  k:"carry_veh", n:"Carry Vehicle" },
-    { t:"sl",  k:"carry_dist", n:"Carry Distance", min:3, max:30, step:1, v:6 },
-    { t:"cb",  k:"carry_physic", n:"Physics Throw (LMB)" },
+    { t:"cb",  k:"carry_veh",   n:"Carry Vehicle (E pickup / drop)" },
+    { t:"sl",  k:"carry_dist",  n:"Carry Distance", min:3, max:30, step:1, v:6 },
+    { t:"cb",  k:"carry_physic",n:"Physics Throw (LMB)" },
     { t:"sl",  k:"carry_force", n:"Throw Force", min:50, max:2000, step:50, v:500 },
   ]},
   { name:"Miscellaneous", items:[
@@ -114,45 +273,40 @@ window.addEventListener("message", (e) => {
   if (d.action === "close") document.body.classList.remove("open");
 });
 
-// ---- NAVIGATION DIRECTE AU CLAVIER (captée par le HTML quand la NUI a le focus)
+// Navigation clavier directe (flèches, Enter, Escape) — la NUI a le focus
 document.addEventListener("keydown", (e) => {
   if (!document.body.classList.contains("open")) return;
 
-  // Enter → toggle / entrer dans une catégorie
   if (e.key === "Enter") {
     if (!state.sub) {
       const cat = SCHEMA[state.cat];
-      if (cat.isSearch) { post("action", { a:"search" }); return; }
+      if (cat.isSearch) { post("action", { a:"search" }); e.preventDefault(); return; }
       if (cat.items.length > 0) { state.sub = true; state.item = 0; render(); }
     } else {
-      const cat = SCHEMA[state.cat];
-      const it = cat.items[state.item];
-      if (!it) return;
-      if (it.t === "cb") {
-        state.toggles[it.k] = !state.toggles[it.k];
-        post("state", { key: it.k, kind:"toggle", value: state.toggles[it.k] });
-        render();
-      } else if (it.t === "btn") {
-        post("action", { a: it.a });
-      } else if (it.t === "cbo") {
-        state.combos[it.k] = (state.combos[it.k] + 1) % it.o.length;
-        post("state", { key: it.k, kind:"combo", value: state.combos[it.k] });
-        render();
+      const it = SCHEMA[state.cat].items[state.item];
+      if (it) {
+        if (it.t === "cb") {
+          state.toggles[it.k] = !state.toggles[it.k];
+          post("state", { key: it.k, kind:"toggle", value: state.toggles[it.k] });
+          render();
+        } else if (it.t === "btn") {
+          post("action", { a: it.a });
+        } else if (it.t === "cbo") {
+          state.combos[it.k] = (state.combos[it.k] + 1) % it.o.length;
+          post("state", { key: it.k, kind:"combo", value: state.combos[it.k] });
+          render();
+        }
       }
     }
-    e.preventDefault();
-    return;
+    e.preventDefault(); return;
   }
 
-  // Escape → retour / fermeture
   if (e.key === "Escape") {
     if (state.sub) { state.sub = false; state.item = 0; render(); }
     else { post("close"); }
-    e.preventDefault();
-    return;
+    e.preventDefault(); return;
   }
 
-  // Flèches
   if (e.key === "ArrowUp" || e.key === "ArrowDown") {
     const dir = e.key === "ArrowUp" ? -1 : 1;
     if (!state.sub) {
@@ -161,9 +315,7 @@ document.addEventListener("keydown", (e) => {
       const total = SCHEMA[state.cat].items.length;
       if (total > 0) state.item = (state.item + dir + total) % total;
     }
-    render();
-    e.preventDefault();
-    return;
+    render(); e.preventDefault(); return;
   }
 
   if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
@@ -184,9 +336,7 @@ document.addEventListener("keydown", (e) => {
         post("state", { key: it.k, kind:"combo", value: state.combos[it.k] });
       }
     }
-    render();
-    e.preventDefault();
-    return;
+    render(); e.preventDefault(); return;
   }
 });
 
@@ -200,20 +350,14 @@ function render(){
   if (!state.sub) {
     $header.textContent = "Home";
     $foot.textContent = `${state.cat + 1}/${SCHEMA.length}`;
-
     SCHEMA.forEach((cat, i) => {
       const row = document.createElement("div");
       row.className = "row" + (i === state.cat ? " active" : "");
-      const left = document.createElement("div");
-      left.className = "name";
-      left.textContent = cat.name;
+      const left = document.createElement("div"); left.className="name"; left.textContent=cat.name;
       row.appendChild(left);
       const right = document.createElement("div");
-      if (cat.isSearch) {
-        right.className = "search-ic"; right.textContent = "⌕";
-      } else {
-        right.className = "arrow"; right.textContent = "»";
-      }
+      if (cat.isSearch) { right.className="search-ic"; right.textContent="⌕"; }
+      else { right.className="arrow"; right.textContent="»"; }
       row.appendChild(right);
       row.onclick = () => {
         if (cat.isSearch) { post("action", { a:"search" }); return; }
@@ -225,23 +369,17 @@ function render(){
     const cat = SCHEMA[state.cat];
     $header.textContent = cat.name;
     $foot.textContent = `${state.item + 1}/${cat.items.length}`;
-
     cat.items.forEach((it, i) => {
       if (it.t === "sep") {
         const row = document.createElement("div");
         row.className = "sep"; row.textContent = it.n;
         $list.appendChild(row); return;
       }
-
       const row = document.createElement("div");
       row.className = "row has-controls" + (i === state.item ? " active" : "");
-
-      const left = document.createElement("div");
-      left.className = "name"; left.textContent = it.n;
+      const left = document.createElement("div"); left.className="name"; left.textContent=it.n;
       row.appendChild(left);
-
-      const right = document.createElement("div");
-      right.className = "ctl";
+      const right = document.createElement("div"); right.className="ctl";
 
       if (it.t === "cb") {
         const tg = document.createElement("div");
@@ -250,43 +388,38 @@ function render(){
           e.stopPropagation();
           state.toggles[it.k] = !state.toggles[it.k];
           state.item = i;
-          post("state", { key: it.k, kind:"toggle", value: state.toggles[it.k] });
+          post("state", { key:it.k, kind:"toggle", value: state.toggles[it.k] });
           render();
         };
         right.appendChild(tg);
       } else if (it.t === "sl") {
-        const sld = document.createElement("div");
-        sld.className = "sld";
+        const sld = document.createElement("div"); sld.className="sld";
         const inp = document.createElement("input");
-        inp.type = "range";
-        inp.min = it.min; inp.max = it.max; inp.step = it.step;
+        inp.type="range"; inp.min=it.min; inp.max=it.max; inp.step=it.step;
         inp.value = state.sliders[it.k];
         const val = document.createElement("div");
-        val.className = "val"; val.textContent = state.sliders[it.k];
-        inp.oninput = () => { state.sliders[it.k] = +inp.value; val.textContent = inp.value; state.item = i; };
-        inp.onchange = () => post("state", { key: it.k, kind:"slider", value: +inp.value });
-        sld.appendChild(inp); sld.appendChild(val);
-        right.appendChild(sld);
+        val.className="val"; val.textContent=state.sliders[it.k];
+        inp.oninput = () => { state.sliders[it.k]=+inp.value; val.textContent=inp.value; state.item=i; };
+        inp.onchange = () => post("state", { key:it.k, kind:"slider", value:+inp.value });
+        sld.appendChild(inp); sld.appendChild(val); right.appendChild(sld);
       } else if (it.t === "cbo") {
-        const cb = document.createElement("div");
-        cb.className = "cb";
+        const cb = document.createElement("div"); cb.className="cb";
         cb.textContent = it.o[state.combos[it.k]];
         cb.onclick = (e) => {
           e.stopPropagation();
-          state.combos[it.k] = (state.combos[it.k] + 1) % it.o.length;
+          state.combos[it.k] = (state.combos[it.k]+1) % it.o.length;
           cb.textContent = it.o[state.combos[it.k]];
           state.item = i;
-          post("state", { key: it.k, kind:"combo", value: state.combos[it.k] });
+          post("state", { key:it.k, kind:"combo", value: state.combos[it.k] });
         };
         right.appendChild(cb);
       } else if (it.t === "btn") {
         const btn = document.createElement("div");
         btn.className = "btn" + (it.d ? " danger" : "");
         btn.textContent = "Run";
-        btn.onclick = (e) => { e.stopPropagation(); state.item = i; post("action", { a: it.a }); };
+        btn.onclick = (e) => { e.stopPropagation(); state.item=i; post("action", { a: it.a }); };
         right.appendChild(btn);
       }
-
       row.appendChild(right);
       $list.appendChild(row);
     });
@@ -309,3 +442,5 @@ window.addEventListener("mouseup", () => drag = null);
 render();
 post("ready");
 </script>
+</body>
+</html>
