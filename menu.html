@@ -1,467 +1,54 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
-<title>RAXO</title>
+<title>RAXO Banner</title>
 <style>
-  :root{
-    --accent:#ff7a1a;
-    --accent-2:#ffb066;
-    --accent-glow:rgba(255,122,26,.45);
-    --bg:#0a0a0c;
-    --panel:#121215;
-    --panel-2:#1a1a20;
-    --stroke:rgba(255,255,255,.08);
-    --text:#eef1f7;
-    --text-dim:#8a93ab;
-    --radius:12px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-drag:none}
+  *{margin:0;padding:0;box-sizing:border-box}
   html,body{
-    width:100%;height:100%;overflow:hidden;background:transparent;
-    font-family:"Inter","Segoe UI",system-ui,sans-serif;
-    font-size:13px;color:var(--text);
-    -webkit-font-smoothing:antialiased;
-  }
-  body{display:none}
-  body.open{display:block}
-
-  .wrap{
-    position:fixed;top:100px;left:100px;
-    width:400px;height:640px;
-    background:var(--bg);
-    border:1px solid var(--stroke);
-    border-radius:calc(var(--radius) + 2px);
-    box-shadow:0 30px 80px rgba(0,0,0,.75), 0 0 40px -10px var(--accent-glow);
+    width:100%;height:100%;
+    background:transparent;
     overflow:hidden;
-    display:flex;flex-direction:column;
-    cursor:default;
+    user-select:none;-webkit-user-drag:none;
   }
-
   .banner{
-    height:150px;
+    position:fixed;
+    top:0;left:0;
+    width:100%;
+    height:130px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     background:linear-gradient(160deg,#ff7a1a,#c94a00);
-    display:flex;align-items:center;justify-content:center;
-    position:relative;overflow:hidden;flex-shrink:0;
+    overflow:hidden;
+    box-shadow:0 4px 24px rgba(0,0,0,.6);
   }
-  .banner img{width:100%;height:100%;object-fit:cover;display:block}
+  .banner img{
+    width:100%;height:100%;
+    object-fit:cover;
+    display:block;
+  }
   .banner .title{
-    position:absolute;font-size:44px;font-weight:800;
-    color:#0a0a0c;letter-spacing:6px;display:none;
+    position:absolute;
+    font-size:52px;font-weight:800;
+    color:#0a0a0c;letter-spacing:8px;
+    display:none;
+    font-family:"Inter","Segoe UI",sans-serif;
   }
   .banner.noimg .title{display:block}
-
-  .header{
-    height:44px;background:#000;
-    display:flex;align-items:center;justify-content:center;
-    font-size:17px;font-weight:600;color:var(--text);
-    border-bottom:1px solid var(--stroke);flex-shrink:0;
-  }
-
-  .list{flex:1;overflow-y:auto;display:flex;flex-direction:column}
-  .list::-webkit-scrollbar{width:6px}
-  .list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
-  .list::-webkit-scrollbar-thumb:hover{background:var(--accent)}
-
-  .row{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:0 18px;height:42px;
-    border-bottom:1px solid rgba(255,255,255,.04);
-    cursor:pointer;transition:background .12s;flex-shrink:0;
-  }
-  .row:hover{background:var(--panel-2)}
-  .row.active{background:var(--accent)}
-  .row.active .name,.row.active .arrow{color:#fff}
-
-  .row .name{font-size:14.5px;color:var(--text);font-weight:500}
-  .row .arrow{font-size:18px;color:#c8c8d0}
-  .row.has-controls{cursor:default}
-  .row.has-controls .ctl{display:flex;align-items:center;gap:10px}
-
-  .tg{
-    width:34px;height:18px;border-radius:10px;position:relative;
-    background:rgba(255,255,255,.1);transition:background .2s;cursor:pointer;flex-shrink:0;
-  }
-  .tg::after{
-    content:'';position:absolute;top:2px;left:2px;
-    width:14px;height:14px;border-radius:50%;background:#fff;
-    transition:left .18s cubic-bezier(.5,1.6,.5,1);
-  }
-  .tg.on{background:var(--accent)}
-  .tg.on::after{left:18px}
-
-  .sld{display:flex;align-items:center;gap:8px;width:180px}
-  .sld input[type=range]{
-    -webkit-appearance:none;flex:1;height:4px;border-radius:2px;
-    background:rgba(255,255,255,.1);outline:none;cursor:pointer;
-  }
-  .sld input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance:none;width:12px;height:12px;border-radius:50%;
-    background:#fff;box-shadow:0 0 8px -1px var(--accent-glow);cursor:pointer;
-  }
-  .sld .val{min-width:32px;text-align:right;font-size:11px;color:var(--text-dim)}
-
-  .cb{
-    padding:4px 12px;border-radius:var(--radius);background:rgba(255,255,255,.05);
-    border:1px solid var(--stroke);font-size:11.5px;cursor:pointer;
-    min-width:110px;text-align:center;transition:all .15s;
-  }
-  .cb:hover{border-color:var(--accent);background:rgba(255,122,26,.1)}
-
-  .btn{
-    padding:5px 12px;border-radius:var(--radius);background:rgba(255,255,255,.05);
-    border:1px solid var(--stroke);font-size:11.5px;font-weight:600;cursor:pointer;
-    transition:all .15s;color:var(--text);
-  }
-  .btn:hover{background:rgba(255,122,26,.15);border-color:var(--accent)}
-  .btn.danger:hover{background:rgba(255,77,107,.15);border-color:#ff4d6b;color:#ff4d6b}
-
-  .search-ic{font-size:18px;color:#c8c8d0}
-
-  .foot{
-    height:34px;background:#000;display:flex;align-items:center;
-    padding:0 16px;font-size:14px;font-weight:600;color:var(--text);
-    border-top:1px solid var(--stroke);flex-shrink:0;
-  }
-
-  .sep{
-    padding:8px 18px 4px;font-size:10.5px;color:var(--text-dim);
-    letter-spacing:1px;text-transform:uppercase;background:transparent;
-    border:none;cursor:default;height:auto;
-  }
-  .sep:hover{background:transparent}
 </style>
 </head>
 <body>
-<div class="wrap" id="wrap">
   <div class="banner" id="banner">
-    <img id="bannerImg" src="" alt="" style="display:none"
+    <img id="img" src="" alt=""
          onload="document.getElementById('banner').classList.remove('noimg')"
          onerror="document.getElementById('banner').classList.add('noimg')">
     <div class="title">RAXO</div>
   </div>
-  <div class="header" id="header">Home</div>
-  <div class="list" id="list"></div>
-  <div class="foot" id="foot">1/10</div>
-</div>
-
 <script>
-const BANNER_URL = "https://i.pinimg.com/736x/3c/b5/fb/3cb5fb27977e675a3b162c065c998682.jpg";
-
-const bannerImg = document.getElementById("bannerImg");
-bannerImg.src = BANNER_URL;
-bannerImg.style.display = "block";
-
-const SCHEMA = [
-  { name:"Self", items:[
-    { t:"cb",  k:"god",     n:"Godmode" },
-    { t:"cb",  k:"stam",    n:"Infinite Stamina" },
-    { t:"cb",  k:"norag",   n:"No Ragdoll" },
-    { t:"cb",  k:"sjump",   n:"Super Jump" },
-    { t:"cb",  k:"noclip",  n:"No Clip" },
-    { t:"sl",  k:"ncspeed", n:"Noclip Speed", min:1, max:30, step:1, v:5 },
-    { t:"sep", n:"Health" },
-    { t:"btn", n:"Heal & Reset Armour", a:"heal" },
-    { t:"btn", n:"Suicide", a:"suicide", d:true },
-  ]},
-  { name:"Online", items:[
-    { t:"btn", n:"Kill Closest",    a:"kill" },
-    { t:"btn", n:"Taze Closest",    a:"taze" },
-    { t:"btn", n:"Force Fall",      a:"force_fall" },
-    { t:"btn", n:"Explode Closest", a:"explode", d:true },
-  ]},
-  { name:"Visual", items:[
-    { t:"cb", k:"esp_box",   n:"Player Box" },
-    { t:"cb", k:"esp_name",  n:"Player Name" },
-    { t:"cb", k:"esp_hp",    n:"Player HP" },
-    { t:"cb", k:"esp_lines", n:"Player Lines" },
-    { t:"cb", k:"esp_veh",   n:"Vehicle Name" },
-    { t:"sl", k:"esp_dist",  n:"Max Distance", min:50, max:600, step:10, v:250 },
-    { t:"sep", n:"Colors" },
-    { t:"sl", k:"esp_r",     n:"Red",   min:0, max:255, step:5, v:255 },
-    { t:"sl", k:"esp_g",     n:"Green", min:0, max:255, step:5, v:122 },
-    { t:"sl", k:"esp_b",     n:"Blue",  min:0, max:255, step:5, v:26  },
-  ]},
-  { name:"Combat", items:[
-    { t:"cb",  k:"ab_on",      n:"Silent Aim" },
-    { t:"cb",  k:"ab_lock",    n:"Aim Lock" },
-    { t:"cb",  k:"ab_players", n:"Players Only" },
-    { t:"sl",  k:"ab_fov",     n:"FOV",        min:10, max:600, step:10, v:120 },
-    { t:"sl",  k:"ab_smooth",  n:"Smoothness", min:1,  max:20,  step:1,  v:6 },
-    { t:"cbo", k:"ab_bone",    n:"Bone",       o:["Head","Neck","Chest","Stomach"] },
-    { t:"sep", n:"Punch" },
-    { t:"cb",  k:"punch_super", n:"Super Punch" },
-    { t:"sl",  k:"punch_power", n:"Punch Power x", min:100, max:5000, step:100, v:1000 },
-  ]},
-  { name:"Weapon", items:[
-    { t:"cb",  k:"w_inf",    n:"Infinite Ammo" },
-    { t:"cb",  k:"w_recoil", n:"No Recoil" },
-    { t:"cb",  k:"w_spread", n:"No Spread" },
-    { t:"cb",  k:"w_dmg_on", n:"Damage Multiplier" },
-    { t:"sl",  k:"w_dmg",    n:"Damage x", min:1, max:50, step:1, v:2 },
-    { t:"sep", n:"Give" },
-    { t:"btn", n:"Give All Weapons",   a:"w_give" },
-    { t:"btn", n:"Remove All Weapons", a:"w_clear", d:true },
-  ]},
-  { name:"Vehicle", items:[
-    { t:"cbo", k:"veh_model", n:"Model", o:["adder","zentorno","t20","sultan","kuruma","buffalo","police","riot"] },
-    { t:"cb",  k:"veh_inside",n:"Spawn Inside" },
-    { t:"btn", n:"Spawn Vehicle", a:"veh_spawn" },
-    { t:"cb",  k:"veh_god",  n:"Vehicle Godmode" },
-    { t:"cb",  k:"veh_fuel", n:"Unlimited Fuel" },
-    { t:"btn", n:"Repair Vehicle", a:"veh_repair" },
-    { t:"btn", n:"Flip Vehicle",   a:"veh_flip" },
-    { t:"btn", n:"Delete Vehicle", a:"veh_del", d:true },
-    { t:"sep", n:"Carry" },
-    { t:"cb",  k:"carry_veh",   n:"Carry Vehicle (E pickup / drop)" },
-    { t:"sl",  k:"carry_dist",  n:"Carry Distance", min:3, max:30, step:1, v:6 },
-    { t:"cb",  k:"carry_physic",n:"Physics Throw (LMB)" },
-    { t:"sl",  k:"carry_force", n:"Throw Force", min:50, max:2000, step:50, v:500 },
-  ]},
-  { name:"Miscellaneous", items:[
-    { t:"btn", n:"Teleport to Waypoint", a:"tp_wp" },
-    { t:"btn", n:"Teleport to Marker",   a:"tp_mk" },
-  ]},
-  { name:"Resources", items:[
-    { t:"btn", n:"Stop monitor",          a:"stop_monitor" },
-    { t:"btn", n:"Stop screenshot-basic", a:"stop_ss" },
-    { t:"btn", n:"Scan Strings",          a:"scan_str" },
-  ]},
-  { name:"Settings", items:[
-    { t:"cb",  k:"ac_prefix", n:"Block ac_* events" },
-    { t:"cb",  k:"ac_anti",   n:"Block anticheat* events" },
-    { t:"cb",  k:"ac_enc",    n:"Block encrypted events" },
-    { t:"cb",  k:"ac_sb",     n:"Block statebag ac_flags" },
-    { t:"btn", n:"Block ban:execute", a:"block_ban" },
-    { t:"sep", n:"Panic" },
-    { t:"btn", n:"PANIC (unhook + clear)", a:"panic", d:true },
-  ]},
-  { name:"Search Feature", isSearch:true, items:[] },
-];
-
-const state = { cat:0, sub:false, item:0, toggles:{}, sliders:{}, combos:{} };
-for (const cat of SCHEMA) for (const it of cat.items||[]) {
-  if (it.t === "cb")  state.toggles[it.k] = false;
-  if (it.t === "sl")  state.sliders[it.k] = it.v ?? it.min;
-  if (it.t === "cbo") state.combos[it.k]  = 0;
-}
-
-const RES = (typeof GetParentResourceName === "function") ? GetParentResourceName() : "raxo";
-function post(path, body={}) {
-  return fetch(`https://${RES}/${path}`, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json; charset=UTF-8" },
-    body: JSON.stringify(body)
-  }).catch(()=>{});
-}
-
-// ---------- MESSAGES DU LUA ----------
-window.addEventListener("message", (e) => {
-  const d = e.data || {};
-  if (d.action === "open")  document.body.classList.add("open");
-  if (d.action === "close") document.body.classList.remove("open");
-  if (d.action === "keys") {
-    handleKey("q",     d.q     === "true");
-    handleKey("e",     d.e     === "true");
-    handleKey("enter", d.enter === "true");
-    handleKey("esc",   d.esc   === "true");
-  }
-});
-
-// ---------- HOLD-TO-REPEAT ----------
-const keyState = {};
-const keyRepeat = {};
-
-function handleKey(key, isDown) {
-  const wasDown = keyState[key] || false;
-  keyState[key] = isDown;
-
-  if (isDown && !wasDown) {
-    navigate(key);
-    keyRepeat[key] = {
-      start: Date.now(),
-      lastFire: Date.now(),
-      rep: 0,
-      timer: setInterval(() => {
-        if (!keyState[key]) {
-          clearInterval(keyRepeat[key].timer);
-          delete keyRepeat[key];
-          return;
-        }
-        const elapsed = Date.now() - keyRepeat[key].start;
-        if (elapsed < 350) return;
-        const interval = Math.max(20, 100 * Math.pow(0.88, keyRepeat[key].rep));
-        if (Date.now() - keyRepeat[key].lastFire >= interval) {
-          navigate(key);
-          keyRepeat[key].lastFire = Date.now();
-          keyRepeat[key].rep++;
-        }
-      }, 20)
-    };
-  }
-
-  if (!isDown && keyRepeat[key]) {
-    clearInterval(keyRepeat[key].timer);
-    delete keyRepeat[key];
-  }
-}
-
-// ---------- NAVIGATION ----------
-function navigate(key) {
-  if (!document.body.classList.contains("open")) return;
-
-  if (key === "esc") {
-    if (state.sub) { state.sub = false; state.item = 0; render(); }
-    else { post("close"); }
-    return;
-  }
-
-  if (key === "enter") {
-    if (!state.sub) {
-      const cat = SCHEMA[state.cat];
-      if (cat.isSearch) { post("action", { a:"search" }); return; }
-      if (cat.items.length > 0) { state.sub = true; state.item = 0; render(); }
-    } else {
-      const it = SCHEMA[state.cat].items[state.item];
-      if (!it) return;
-      if (it.t === "cb") {
-        state.toggles[it.k] = !state.toggles[it.k];
-        post("state", { key: it.k, kind:"toggle", value: state.toggles[it.k] });
-        render();
-      } else if (it.t === "btn") {
-        post("action", { a: it.a });
-      } else if (it.t === "cbo") {
-        state.combos[it.k] = (state.combos[it.k] + 1) % it.o.length;
-        post("state", { key: it.k, kind:"combo", value: state.combos[it.k] });
-        render();
-      } else if (it.t === "sl") {
-        const step = it.step || 1;
-        let v = state.sliders[it.k] + step;
-        v = Math.max(it.min, Math.min(it.max, v));
-        state.sliders[it.k] = v;
-        post("state", { key: it.k, kind:"slider", value: v });
-        render();
-      }
-    }
-    return;
-  }
-
-  if (key === "q" || key === "e") {
-    const dir = (key === "q") ? -1 : 1;
-    if (!state.sub) {
-      state.cat = (state.cat + dir + SCHEMA.length) % SCHEMA.length;
-    } else {
-      const total = SCHEMA[state.cat].items.length;
-      if (total > 0) state.item = (state.item + dir + total) % total;
-    }
-    render();
-    return;
-  }
-}
-
-// ---------- RENDER ----------
-const $list = document.getElementById("list");
-const $header = document.getElementById("header");
-const $foot = document.getElementById("foot");
-
-function render(){
-  $list.innerHTML = "";
-
-  if (!state.sub) {
-    $header.textContent = "Home";
-    $foot.textContent = `${state.cat + 1}/${SCHEMA.length}`;
-    SCHEMA.forEach((cat, i) => {
-      const row = document.createElement("div");
-      row.className = "row" + (i === state.cat ? " active" : "");
-      const left = document.createElement("div"); left.className="name"; left.textContent=cat.name;
-      row.appendChild(left);
-      const right = document.createElement("div");
-      if (cat.isSearch) { right.className="search-ic"; right.textContent="⌕"; }
-      else { right.className="arrow"; right.textContent="»"; }
-      row.appendChild(right);
-      row.onclick = () => {
-        if (cat.isSearch) { post("action", { a:"search" }); return; }
-        state.sub = true; state.item = 0; render();
-      };
-      $list.appendChild(row);
-    });
-  } else {
-    const cat = SCHEMA[state.cat];
-    $header.textContent = cat.name;
-    $foot.textContent = `${state.item + 1}/${cat.items.length}`;
-    cat.items.forEach((it, i) => {
-      if (it.t === "sep") {
-        const row = document.createElement("div");
-        row.className = "sep"; row.textContent = it.n;
-        $list.appendChild(row); return;
-      }
-      const row = document.createElement("div");
-      row.className = "row has-controls" + (i === state.item ? " active" : "");
-      const left = document.createElement("div"); left.className="name"; left.textContent=it.n;
-      row.appendChild(left);
-      const right = document.createElement("div"); right.className="ctl";
-
-      if (it.t === "cb") {
-        const tg = document.createElement("div");
-        tg.className = "tg" + (state.toggles[it.k] ? " on" : "");
-        tg.onclick = (e) => {
-          e.stopPropagation();
-          state.toggles[it.k] = !state.toggles[it.k];
-          state.item = i;
-          post("state", { key:it.k, kind:"toggle", value: state.toggles[it.k] });
-          render();
-        };
-        right.appendChild(tg);
-      } else if (it.t === "sl") {
-        const sld = document.createElement("div"); sld.className="sld";
-        const inp = document.createElement("input");
-        inp.type="range"; inp.min=it.min; inp.max=it.max; inp.step=it.step;
-        inp.value = state.sliders[it.k];
-        const val = document.createElement("div");
-        val.className="val"; val.textContent=state.sliders[it.k];
-        inp.oninput = () => { state.sliders[it.k]=+inp.value; val.textContent=inp.value; state.item=i; };
-        inp.onchange = () => post("state", { key:it.k, kind:"slider", value:+inp.value });
-        sld.appendChild(inp); sld.appendChild(val); right.appendChild(sld);
-      } else if (it.t === "cbo") {
-        const cb = document.createElement("div"); cb.className="cb";
-        cb.textContent = it.o[state.combos[it.k]];
-        cb.onclick = (e) => {
-          e.stopPropagation();
-          state.combos[it.k] = (state.combos[it.k]+1) % it.o.length;
-          cb.textContent = it.o[state.combos[it.k]];
-          state.item = i;
-          post("state", { key:it.k, kind:"combo", value: state.combos[it.k] });
-        };
-        right.appendChild(cb);
-      } else if (it.t === "btn") {
-        const btn = document.createElement("div");
-        btn.className = "btn" + (it.d ? " danger" : "");
-        btn.textContent = "Run";
-        btn.onclick = (e) => { e.stopPropagation(); state.item=i; post("action", { a: it.a }); };
-        right.appendChild(btn);
-      }
-      row.appendChild(right);
-      $list.appendChild(row);
-    });
-  }
-}
-
-// drag window
-const wrap = document.getElementById("wrap");
-let drag = null;
-wrap.addEventListener("mousedown", e => {
-  if (e.target.closest(".row,.tg,.cb,.btn,input,img")) return;
-  drag = { x:e.clientX, y:e.clientY, lx:wrap.offsetLeft, ly:wrap.offsetTop };
-});
-window.addEventListener("mousemove", e => {
-  if (!drag) return;
-  wrap.style.left = (drag.lx + e.clientX - drag.x) + "px";
-  wrap.style.top  = (drag.ly + e.clientY - drag.y) + "px";
-});
-window.addEventListener("mouseup", () => drag = null);
-
-render();
-post("ready");
+  const URL = "https://i.pinimg.com/736x/3c/b5/fb/3cb5fb27977e675a3b162c065c998682.jpg";
+  const img = document.getElementById("img");
+  img.src = URL;
 </script>
 </body>
 </html>
