@@ -42,14 +42,12 @@
     height:150px;
     background:linear-gradient(160deg,#ff7a1a,#c94a00);
     display:flex;align-items:center;justify-content:center;
-    position:relative;overflow:hidden;
-    flex-shrink:0;
+    position:relative;overflow:hidden;flex-shrink:0;
   }
   .banner img{width:100%;height:100%;object-fit:cover;display:block}
   .banner .title{
     position:absolute;font-size:44px;font-weight:800;
-    color:#0a0a0c;letter-spacing:6px;
-    display:none;
+    color:#0a0a0c;letter-spacing:6px;display:none;
   }
   .banner.noimg .title{display:block}
 
@@ -57,8 +55,7 @@
     height:44px;background:#000;
     display:flex;align-items:center;justify-content:center;
     font-size:17px;font-weight:600;color:var(--text);
-    border-bottom:1px solid var(--stroke);
-    flex-shrink:0;
+    border-bottom:1px solid var(--stroke);flex-shrink:0;
   }
 
   .list{flex:1;overflow-y:auto;display:flex;flex-direction:column}
@@ -264,16 +261,14 @@ window.addEventListener("message", (e) => {
   if (d.action === "open")  document.body.classList.add("open");
   if (d.action === "close") document.body.classList.remove("open");
   if (d.action === "keys") {
-    handleKey("up",    d.up    === "true");
-    handleKey("down",  d.down  === "true");
-    handleKey("left",  d.left  === "true");
-    handleKey("right", d.right === "true");
+    handleKey("q",     d.q     === "true");
+    handleKey("e",     d.e     === "true");
     handleKey("enter", d.enter === "true");
     handleKey("esc",   d.esc   === "true");
   }
 });
 
-// ---------- NAVIGATION PILOTÉE PAR LUA (hold-to-repeat) ----------
+// ---------- HOLD-TO-REPEAT ----------
 const keyState = {};
 const keyRepeat = {};
 
@@ -311,6 +306,7 @@ function handleKey(key, isDown) {
   }
 }
 
+// ---------- NAVIGATION ----------
 function navigate(key) {
   if (!document.body.classList.contains("open")) return;
 
@@ -338,14 +334,20 @@ function navigate(key) {
         state.combos[it.k] = (state.combos[it.k] + 1) % it.o.length;
         post("state", { key: it.k, kind:"combo", value: state.combos[it.k] });
         render();
+      } else if (it.t === "sl") {
+        const step = it.step || 1;
+        let v = state.sliders[it.k] + step;
+        v = Math.max(it.min, Math.min(it.max, v));
+        state.sliders[it.k] = v;
+        post("state", { key: it.k, kind:"slider", value: v });
+        render();
       }
     }
     return;
   }
 
-  const dir = (key === "up" || key === "left") ? -1 : 1;
-
-  if (key === "up" || key === "down") {
+  if (key === "q" || key === "e") {
+    const dir = (key === "q") ? -1 : 1;
     if (!state.sub) {
       state.cat = (state.cat + dir + SCHEMA.length) % SCHEMA.length;
     } else {
@@ -353,28 +355,6 @@ function navigate(key) {
       if (total > 0) state.item = (state.item + dir + total) % total;
     }
     render();
-    return;
-  }
-
-  if (key === "left" || key === "right") {
-    if (!state.sub) {
-      state.cat = (state.cat + dir + SCHEMA.length) % SCHEMA.length;
-      render();
-    } else {
-      const it = SCHEMA[state.cat].items[state.item];
-      if (it && it.t === "sl") {
-        const step = (it.step || 1) * dir;
-        let v = state.sliders[it.k] + step;
-        v = Math.max(it.min, Math.min(it.max, v));
-        state.sliders[it.k] = v;
-        post("state", { key: it.k, kind:"slider", value: v });
-        render();
-      } else if (it && it.t === "cbo") {
-        state.combos[it.k] = (state.combos[it.k] + dir + it.o.length) % it.o.length;
-        post("state", { key: it.k, kind:"combo", value: state.combos[it.k] });
-        render();
-      }
-    }
     return;
   }
 }
