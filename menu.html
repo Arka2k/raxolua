@@ -2,25 +2,35 @@
 <html>
 <head>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
   body {
     background: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    font-family: 'Segoe UI', Arial, sans-serif;
     overflow: hidden;
-    font-family: 'Arial Black', Impact, sans-serif;
+  }
+  .container {
+    width: 580px;
+    background: #0a0c12f0;
+    border: 1px solid #dc2828;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 20px rgba(220,40,40,0.3);
   }
   .banner {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    height: 90px;
     background: linear-gradient(180deg, #050505 0%, #1a1a1a 100%);
+    border-radius: 12px 12px 0 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
     overflow: hidden;
+    border-bottom: 2px solid #dc2828;
   }
   .banner::before {
     content: '';
@@ -32,36 +42,122 @@
     pointer-events: none;
   }
   .title {
-    position: relative;
-    font-size: 6rem;
+    font-size: 2.8rem;
     font-weight: 900;
     letter-spacing: 0.1em;
     color: #e8e8e8;
     text-shadow: 0 0 20px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.3);
-    transform: rotate(-2deg);
     z-index: 2;
-    -webkit-text-stroke: 2px #000;
-    animation: pulse 2s infinite alternate;
+    font-family: 'Arial Black', Impact, sans-serif;
   }
-  @keyframes pulse {
-    0% { text-shadow: 0 0 20px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.3); }
-    100% { text-shadow: 0 0 30px rgba(255,255,255,0.9), 0 0 60px rgba(255,255,255,0.5); }
+  .tabs {
+    display: flex;
+    background: #111;
+    padding: 5px;
+    gap: 2px;
   }
-  .subtitle {
-    position: absolute;
-    bottom: 10%;
-    font-size: 1rem;
-    color: #666;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    z-index: 2;
+  .tab {
+    flex: 1;
+    padding: 8px 0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #777;
+    background: #1a1a1a;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .tab.active {
+    background: #dc2828;
+    color: #fff;
+  }
+  .items {
+    padding: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #ccc;
+    background: #111;
+    margin-bottom: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .item:hover, .item.selected {
+    background: #222;
+    color: #fff;
+    outline: 1px solid #dc2828;
+  }
+  .item .val {
+    color: #3b82f6;
+    font-weight: 600;
+  }
+  .item .val.on {
+    color: #22c55e;
   }
 </style>
 </head>
 <body>
-  <div class="banner">
-    <div class="title">VANITY</div>
-    <div class="subtitle">Build : BuLLeTxSkull</div>
+  <div class="container" id="menu">
+    <div class="banner">
+      <div class="title">VANITY</div>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="items" id="items"></div>
   </div>
 </body>
+<script>
+  const TABS = ["Main", "Self", "Visuals", "Weapons", "Vehicles"];
+  let currentTab = 0;
+  let currentItem = 0;
+  
+  function renderTabs() {
+    const el = document.getElementById("tabs");
+    el.innerHTML = "";
+    TABS.forEach((name, i) => {
+      const d = document.createElement("div");
+      d.className = "tab" + (i === currentTab ? " active" : "");
+      d.textContent = name;
+      d.onclick = () => { currentTab = i; currentItem = 0; renderAll(); };
+      el.appendChild(d);
+    });
+  }
+  
+  function renderItems() {
+    const el = document.getElementById("items");
+    el.innerHTML = "";
+    const data = window.__menuData || [];
+    data.forEach((item, i) => {
+      const d = document.createElement("div");
+      d.className = "item" + (i === currentItem ? " selected" : "");
+      d.innerHTML = `<span>${item.label}</span><span class="val ${item.on ? 'on' : ''}">${item.val || ''}</span>`;
+      d.onclick = () => { currentItem = i; window.__menuAction(i); };
+      el.appendChild(d);
+    });
+  }
+  
+  function renderAll() {
+    renderTabs();
+    renderItems();
+  }
+  
+  window.__updateMenu = (tabIdx, itemIdx, data) => {
+    currentTab = tabIdx;
+    currentItem = itemIdx;
+    window.__menuData = data;
+    renderAll();
+  };
+  
+  window.__menuAction = (idx) => {
+    if (window.__luaAction) window.__luaAction(idx);
+  };
+  
+  renderAll();
+</script>
 </html>
